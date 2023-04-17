@@ -143,7 +143,7 @@ class Parser {
 
   _parseSharedString(XmlElement node) {
     final sharedString = SharedString(node: node);
-    _excel._sharedStrings.add(sharedString);
+    _excel._sharedStrings.parseAdd(sharedString);
   }
 
   _parseContent({bool run = true}) {

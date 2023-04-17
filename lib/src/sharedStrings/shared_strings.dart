@@ -28,6 +28,22 @@ class _SharedStringsMaintainer {
     return newSharedString;
   }
 
+  /// The strings stored in sharedStrings are not unique, and there may
+  /// be multiple instances of the same string.
+  /// To cope with this, the list should be read in such a way that the
+  /// order and number of strings registered in the list is maintained.
+  /// 
+  /// For [Parser._parseSharedString].
+  void parseAdd(SharedString val) {
+    if (_map[val] == null) {
+      _map[val] = _IndexingHolder(_index);
+    } else {
+      _map[val]!.increaseCount();
+    }
+    _list.add(val);
+    _index += 1;
+  }
+
   void add(SharedString val) {
     if (_map[val] == null) {
       _map[val] = _IndexingHolder(_index);
@@ -85,7 +101,8 @@ class SharedString {
   String toString() {
     var buffer = StringBuffer();
     node.findAllElements('t').forEach((child) {
-      if (child.parentElement == null || child.parentElement!.name.local != 'rPh') {
+      if (child.parentElement == null ||
+          child.parentElement!.name.local != 'rPh') {
         buffer.write(Parser._parseValue(child));
       }
     });

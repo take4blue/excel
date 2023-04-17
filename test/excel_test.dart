@@ -430,4 +430,37 @@ void main() {
       new Directory('./tmp').delete(recursive: true);
     });
   });
+
+  group('for duplicate shared strings', () {
+    test('case 1', () {
+      var file = './test/test_resources/string.xlsx';
+      var bytes = File(file).readAsBytesSync();
+      var excel = Excel.decodeBytes(bytes);
+
+      final table = excel.tables.keys.first;
+
+      final List<List<String>> result = <List<String>>[];
+
+      if (excel.tables.containsKey(table)) {
+        for (final row in excel.tables[table]!.rows) {
+          result.add(
+              row.map((element) => element?.value?.toString() ?? '').toList());
+        }
+      }
+      expect(result, [
+        ['keys', 'en', 'ja_JP'],
+        ["l1msg1", "Select Locale", "ロケール選択"],
+        ["l1system1", "System", "システム"],
+        ["s1Title", "Settings", "設定"],
+        ["s1Header1", "GUI Settings", "GUI設定"],
+        ["s1Gr1Lb1", "Card", "カードタイプ"],
+        ["s1Header2", "Theme settings", "テーマ設定"],
+        ["s1Gr2Lb1", "Material 3 mode", "Material 3モード"],
+        ["s1Gr2Lb2", "Select theme", "テーマ選択"],
+        ["tSystem", "System", "システム"],
+        ["tlight", "Light", "ライト"],
+        ["tdark", "Dark", "ダーク"],
+      ]);
+    });
+  });
 }
